@@ -2948,7 +2948,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Pelvis
+    path: Pelvis/RightLeg
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2960,7 +2960,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Pelvis
+    path: Pelvis/RightLeg
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2972,7 +2972,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Pelvis
+    path: Pelvis/RightLeg
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -3020,7 +3020,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Pelvis/RightLeg
+    path: Pelvis
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -3032,7 +3032,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Pelvis/RightLeg
+    path: Pelvis
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -3044,7 +3044,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Pelvis/RightLeg
+    path: Pelvis
     classID: 4
     script: {fileID: 0}
     flags: 0
