@@ -1,3 +1,4 @@
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -9,12 +10,14 @@ public class Enemy : Poolable
     [SerializeField]
     private RuntimeAnimatorController[] animatorController;
 
-    // ³»ºÎ »ç¿ë º¯¼ö
+    // ë‚´ë¶€ ì‚¬ìš© ë³€ìˆ˜
     private Rigidbody2D target;
     private Rigidbody2D rigid;
+    private Collider2D col;
     private Animator animator;    
     private Vector2 dirVector;
     private SortingGroup sortingGroup;
+    private WaitForFixedUpdate wait;
     
     private bool isLive = true;
 
@@ -23,18 +26,25 @@ public class Enemy : Poolable
         rigid = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         sortingGroup = GetComponent<SortingGroup>();
+        col = GetComponent<Collider2D>();
     }
 
     private void OnEnable()
     {
-        target = GameManager.Instance.player.GetComponent<Rigidbody2D>();
-        isLive = true;
+        target = GameManager.Instance.player.GetComponent<Rigidbody2D>();        
         health = maxHealth;
+        isLive = true;
+        col.enabled = true;
+        rigid.simulated = true;
+        animator.SetBool("Dead", false);
     }
 
     private void FixedUpdate()
     {
-        if (!isLive) return;
+        if (!isLive || animator.GetCurrentAnimatorStateInfo(0).IsName("Hit"))
+        {
+            return;
+        }
         dirVector = target.position - rigid.position;
         Vector2 nextPosition = dirVector.normalized * speed * Time.fixedDeltaTime;
         rigid.MovePosition(rigid.position + nextPosition);
@@ -49,13 +59,62 @@ public class Enemy : Poolable
             transform.localRotation = dirVector.x < 0 ? Quaternion.Euler(0f, 180f, 0f) : Quaternion.Euler(0f, 0f, 0f);
         }
 
-        sortingGroup.sortingOrder = Mathf.CeilToInt(rigid.position.y);
+        sortingGroup.sortingOrder = Mathf.RoundToInt(rigid.position.y);
     }
 
     public void Init(SpawnData data)
-    {
-        animator.runtimeAnimatorController = animatorController[data.index];
+    {        
         maxHealth = data.health;
         health = data.health;
+        speed = data.speed;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!isLive) return;
+
+        if (collision.gameObject.CompareTag("Attack"))
+        {
+            Attack atk = collision.gameObject.GetComponent<Attack>();
+            if (atk != null)
+            {
+                
+                health -= Random.Range(atk.WeaponInfo.minDamage, atk.WeaponInfo.maxDamage);
+                StartCoroutine(Knockback(atk.WeaponInfo.knockBack));
+
+                if (health > 0f)
+                {
+                    animator.SetTrigger("Hit");
+                }
+                else
+                {                    
+                    StartCoroutine(Dead());
+                }
+            }
+        }
+    }
+
+    private IEnumerator Knockback(float knockBack)
+    {
+        yield return wait;
+        DoKnockback(knockBack);
+    }
+
+    private IEnumerator Dead()
+    {        
+        animator.SetBool("Dead", true);
+        isLive = false;
+        col.enabled = false;
+        DoKnockback();
+        yield return new WaitForSeconds(0.5f);
+        rigid.simulated = false;        
+        Release();
+    }
+
+    private void DoKnockback(float distance = 2f)
+    {
+        Vector3 playerPosition = GameManager.Instance.player.transform.position;
+        Vector3 directionVector = transform.position - playerPosition;
+        rigid.AddRelativeForce(directionVector.normalized * distance, ForceMode2D.Impulse);
     }
 }

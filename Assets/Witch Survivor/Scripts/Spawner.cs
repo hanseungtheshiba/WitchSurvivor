@@ -18,23 +18,33 @@ public class Spawner : MonoBehaviour
 
         if(timer > 1f)
         {
-            Spawn();
+            Spawn(0);
             timer = 0f;
         }
     }
 
-    private void Spawn()
+    private void Spawn(int level)
     {
-        GameObject enemy = PoolManager.Instance.GetObject("Officer");
-        enemy.transform.position = spawnPoint[Random.Range(1, spawnPoint.Length)].transform.position;
+        SpawnData enemyData = GameManager.Instance.GetSpawnData(level);
+        GameObject newEnemy = PoolManager.Instance.GetObject(enemyData.objectName);
+        if(newEnemy != null)
+        {
+            Enemy enemyComponent = newEnemy.GetComponent<Enemy>();
+            if(enemyComponent != null)
+            {
+                enemyComponent.Init(enemyData);
+            }
+            newEnemy.transform.position = spawnPoint[Random.Range(1, spawnPoint.Length)].transform.position;
+        }
+        
     }
 }
 
 [System.Serializable]
 public class SpawnData
 {
-    public float spawnTime;
-    public int index;
+    public string objectName;
+    public float spawnTime;    
     public int health;
     public float speed;
 }

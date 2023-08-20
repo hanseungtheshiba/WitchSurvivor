@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Reposition : MonoBehaviour
@@ -18,7 +16,7 @@ public class Reposition : MonoBehaviour
         }
 
         if (GameManager.Instance == null) return;
-
+        if (GameManager.Instance.player == null) return;
         Vector3 playerPosition = GameManager.Instance.player.transform.position;
         Vector3 mapPosition = transform.position;
         float diffX = Mathf.Abs(playerPosition.x - mapPosition.x);
